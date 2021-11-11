@@ -13,5 +13,5 @@ const config = {
 
 
 
-//module.exports = knex(config[environment]);  ?????
+//module.exports = knex(config[environment]);
 module.exports = knex(config);

@@ -2,16 +2,22 @@ const router = require('express').Router();
 const accountsModel = require('./accounts-model');
 const { checkAccountId, checkAccountPayload, checkAccountNameUnique } = require('./accounts-middleware')
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res, next) => {
   // DO YOUR MAGIC
-  accountsModel
-    .getAll()
-    .then((accounts) => {
-      return res.status(200).json(accounts)
-    })
-    .catch(() => {
-      res.status(500).json({ message: "server error" })
-    })
+  // await accountsModel
+  //   .getAll()
+  //   .then((accounts) => {
+  //     return res.status(200).json(accounts)
+  //   })
+  //   .catch(() => {
+  //     res.status(500).json({ message: "server error" })
+  //   })
+  try {
+    const accounts = await accountsModel.getAll()
+    res.status(200).json(accounts)
+  } catch (err) {
+    next(err)
+  }
 })
 
 router.get('/:id', checkAccountId, async (req, res) => {
@@ -27,7 +33,7 @@ router.get('/:id', checkAccountId, async (req, res) => {
 router.post('/', checkAccountPayload, checkAccountNameUnique, (req, res) => {
   // DO YOUR MAGIC
   accountsModel
-    .create(req.body)
+    .create({ name: req.body.name.trim(), budget: req.body.budget })
     .then((data) => {
       res.status(201).json(data);
     })
@@ -37,7 +43,7 @@ router.post('/', checkAccountPayload, checkAccountNameUnique, (req, res) => {
 
 })
 
-router.put('/:id', checkAccountId, (req, res) => {
+router.put('/:id', checkAccountId, checkAccountPayload, (req, res) => {
   // DO YOUR MAGIC
   accountsModel
     .updateById(req.params.id, req.body)
@@ -61,6 +67,9 @@ router.delete('/:id', checkAccountId, async (req, res) => {
 
 router.use((err, req, res, next) => { // eslint-disable-line
   // DO YOUR MAGIC
+  res.status(err.status || 500).json({
+    message: err.message,
+  })
 })
 
 module.exports = router;
