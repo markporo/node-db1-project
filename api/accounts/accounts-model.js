@@ -7,7 +7,7 @@ const getAll = () => {
 
 const getById = id => {
   // DO YOUR MAGIC
-  db('accounts').where({ id: id }) // resolves to an array containing accounts that match the where
+  return db('accounts').where({ id: id }) // resolves to an array containing accounts that match the where
 }
 
 const create = account => {
@@ -16,9 +16,9 @@ const create = account => {
 
 }
 
-const updateById = (id, account) => {
+const updateById = (id, accountChanges) => {
   // DO YOUR MAGIC
-  db('accounts').where({ id: id }).update(account); // returns a number of records updated
+  db('accounts').where({ id: id }).update(accountChanges); // returns a number of records updated
 }
 
 const deleteById = id => {
